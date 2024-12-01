@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"net/http"
 )
 
@@ -34,11 +35,36 @@ func (s *api) createUsersHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	user := User{
-		firstName: payload.firstName,
-		lastName:  payload.lastName,
+		Email:     payload.Email,
+		FirstName: payload.FirstName,
+		LastName:  payload.LastName,
 	}
 
-	users = append(users, user)
+	if err := insertUser(user); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 
 	w.WriteHeader(http.StatusCreated)
+}
+
+func insertUser(pUser User) error {
+
+	if pUser.Email == "" {
+		return errors.New("Email is required")
+	}
+
+	if pUser.FirstName == "" {
+		return errors.New("First name is required")
+	}
+
+	for _, user := range users {
+
+		if user.Email == pUser.Email {
+			return errors.New("User already exists")
+		}
+	}
+
+	users = append(users, pUser)
+	return nil
 }

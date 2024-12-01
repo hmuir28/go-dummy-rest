@@ -1,6 +1,7 @@
 package main
 
 type User struct {
-	firstName string
-	lastName  string
+	Email     string `json:"email"`
+	FirstName string `json:"first_name"`
+	LastName  string `json:"last_name"`
 }
