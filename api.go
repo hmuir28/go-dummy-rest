@@ -12,6 +12,18 @@ type api struct {
 
 var users = []User{}
 
+func (s *api) usersHandler(w http.ResponseWriter, r *http.Request) {
+
+	switch r.Method {
+	case http.MethodGet:
+		s.getUsersHandler(w, r)
+	case http.MethodPost:
+		s.createUsersHandler(w, r)
+	default:
+	}
+
+}
+
 func (s *api) getUsersHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
@@ -51,17 +63,17 @@ func (s *api) createUsersHandler(w http.ResponseWriter, r *http.Request) {
 func insertUser(pUser User) error {
 
 	if pUser.Email == "" {
-		return errors.New("Email is required")
+		return errors.New("email is required")
 	}
 
 	if pUser.FirstName == "" {
-		return errors.New("First name is required")
+		return errors.New("first name is required")
 	}
 
 	for _, user := range users {
 
 		if user.Email == pUser.Email {
-			return errors.New("User already exists")
+			return errors.New("user already exists")
 		}
 	}
 
